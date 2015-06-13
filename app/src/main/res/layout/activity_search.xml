@@ -1,0 +1,91 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="packalist.SearchActivity">
+
+
+    <AutoCompleteTextView
+        android:id="@+id/fromCntry"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:hint="From City"
+        android:imeOptions="actionNext"
+        android:nextFocusDown="@+id/toCntry"
+        android:singleLine="true" />
+
+    <AutoCompleteTextView
+        android:id="@+id/toCntry"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fromCntry"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:hint="To City"
+        android:imeOptions="actionNext"
+        android:nextFocusDown="@+id/fromDate"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/fromDate"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toCntry"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:hint="From: MM/DD/YYYY"
+        android:nextFocusDown="@+id/toDate"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/toDate"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fromDate"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:hint="To: MM/DD/YYYY"
+        android:imeOptions="actionDone"
+        android:singleLine="true" />
+
+    <RadioGroup
+        android:id="@+id/gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toDate">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/search"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gender"
+        android:layout_centerHorizontal="true"
+        android:text="SEARCH" />
+
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/snackbarPosition2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+    </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
