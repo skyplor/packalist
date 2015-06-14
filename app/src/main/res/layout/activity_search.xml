@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,8 +10,9 @@
     tools:context="packalist.SearchActivity">
 
 
-    <AutoCompleteTextView
+    <com.rey.material.widget.EditText
         android:id="@+id/fromCntry"
+        style="@style/Material.Widget.EditText.Light"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -18,10 +20,12 @@
         android:hint="From City"
         android:imeOptions="actionNext"
         android:nextFocusDown="@+id/toCntry"
-        android:singleLine="true" />
+        android:singleLine="true"
+        app:et_autoCompleteMode="single" />
 
-    <AutoCompleteTextView
+    <com.rey.material.widget.EditText
         android:id="@+id/toCntry"
+        style="@style/Material.Widget.EditText.Light"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fromCntry"
@@ -30,54 +34,119 @@
         android:hint="To City"
         android:imeOptions="actionNext"
         android:nextFocusDown="@+id/fromDate"
-        android:singleLine="true" />
+        android:singleLine="true"
+        app:et_autoCompleteMode="single" />
 
-    <EditText
+    <Button
         android:id="@+id/fromDate"
+        style="@android:style/Widget.Holo.Spinner"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toCntry"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:hint="From: MM/DD/YYYY"
+        android:hint="Departure Date"
         android:nextFocusDown="@+id/toDate"
         android:singleLine="true" />
 
-    <EditText
+    <Button
         android:id="@+id/toDate"
+        style="@android:style/Widget.Holo.Spinner"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/fromDate"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:hint="To: MM/DD/YYYY"
+        android:hint="Return Date"
         android:imeOptions="actionDone"
         android:singleLine="true" />
 
     <RadioGroup
         android:id="@+id/gender"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toDate">
+        android:layout_below="@+id/toDate"
+        android:layout_centerHorizontal="true"
+        android:orientation='horizontal'>
 
-        <RadioButton
+        <com.rey.material.widget.RadioButton
+            android:id="@+id/male"
+            style="@style/Material.Drawable.RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
             android:text="Male" />
 
-        <RadioButton
+        <com.rey.material.widget.RadioButton
+            android:id="@+id/female"
+            style="@style/Material.Drawable.RadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
             android:text="Female" />
     </RadioGroup>
 
-    <Button
-        android:id="@+id/search"
-        android:layout_width="300dp"
+    <GridLayout
+        android:id="@+id/checkboxGroup"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/gender"
         android:layout_centerHorizontal="true"
-        android:text="SEARCH" />
+        android:columnCount="2">
+
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/party"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Party" />
+
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/backpacking"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Backpacking" />
+
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/beach"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Beach/Sea" />
+
+        <com.rey.material.widget.CheckBox
+            android:id="@+id/business"
+            style="@style/Material.Drawable.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="Business/Work" />
+    </GridLayout>
+
+
+    <com.rey.material.widget.Button
+        android:id="@+id/search"
+        style="@style/RaiseColorButtonRippleStyle"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/checkboxGroup"
+        android:layout_centerHorizontal="true"
+        android:text="SEARCH"
+        app:rd_enable="true" />
 
 
     <android.support.design.widget.CoordinatorLayout

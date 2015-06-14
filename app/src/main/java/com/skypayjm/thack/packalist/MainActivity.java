@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import com.rey.material.widget.EditText;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
     private void goToNextActivity() {
         Intent searchIntent = new Intent(MainActivity.this, SearchActivity_.class);
         startActivity(searchIntent);
+        this.finish();
     }
 
     @DebugLog

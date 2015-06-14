@@ -1,38 +1,63 @@
 package com.skypayjm.thack.packalist;
 
-import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.Button;
+import android.widget.CompoundButton;
+
+import com.rey.material.app.DatePickerDialog;
+import com.rey.material.app.Dialog;
+import com.rey.material.app.DialogFragment;
+import com.rey.material.widget.CheckBox;
+import com.rey.material.widget.EditText;
+import com.rey.material.widget.RadioButton;
+import com.skypayjm.thack.packalist.Events.PackItemsAvailableEvent;
+import com.skypayjm.thack.packalist.model.Airport;
+import com.skypayjm.thack.packalist.model.PackItem;
+import com.skypayjm.thack.packalist.util.AmadeusJSONParser;
+import com.skypayjm.thack.packalist.util.VolleyRequest;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.FocusChange;
-import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.ViewById;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_search)
 public class SearchActivity extends AppCompatActivity {
 
     @ViewById
-    EditText fromDate, toDate;
+    Button fromDate, toDate;
 
-    private DatePickerDialog fromDatePickerDialog;
-    private DatePickerDialog toDatePickerDialog;
+    @ViewById
+    EditText fromCntry, toCntry;
+
+    @ViewById
+    View snackbarPosition2;
+
+    @ViewById
+    RadioButton male, female;
+
+    @ViewById
+    CheckBox party, backpacking, beach, business;
+
     private SimpleDateFormat dateFormatter;
+    private EventBus eventBus;
 
     @Override
-
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
@@ -54,55 +79,74 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @FocusChange
-    public void fromDate(View hello, boolean hasFocus) {
-        if (hasFocus && !fromDatePickerDialog.isShowing()) fromDatePickerDialog.show();
-    }
-
     @Click
     public void fromDate() {
-        if (!fromDatePickerDialog.isShowing()) fromDatePickerDialog.show();
-    }
-
-    @FocusChange
-    public void toDate(View hello, boolean hasFocus) {
-        if (hasFocus && !toDatePickerDialog.isShowing()) toDatePickerDialog.show();
+        showDatePicker(fromDate);
     }
 
     @Click
     public void toDate() {
-        if (!toDatePickerDialog.isShowing()) toDatePickerDialog.show();
+        showDatePicker(toDate);
     }
 
     @AfterViews
     public void init() {
         dateFormatter = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-        setDateTimeField();
+        fromCntry.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handleTextChange(fromCntry);
+            }
+        });
+        toCntry.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                handleTextChange(toCntry);
+            }
+
+        });
+        male.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) female.setChecked(false);
+            }
+        });
+        female.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) male.setChecked(false);
+            }
+        });
     }
 
-    @ViewById
-    AutoCompleteTextView fromCntry, toCntry;
+    public void handleTextChange(EditText v) {
 
-    @ViewById
-    View snackbarPosition2;
-
-    @TextChange
-    public void fromCntry() {
-
-        String jsonConnectionLink = "http://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=" + getResources().getString(R.string.amadeusAPI) + "&term=" + fromCntry.getText().toString();
+        String jsonConnectionLink = "http://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=" + getResources().getString(R.string.amadeusAPI) + "&term=" + v.getText().toString();
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line);
-        VolleyAirportRequest request = new VolleyAirportRequest(this, jsonConnectionLink, snackbarPosition2, fromCntry, arrayAdapter);
-        PackalistApplication_.getInstance().addToRequestQueue(request);
-    }
-
-    @TextChange
-    public void toCntry() {
-
-        String jsonConnectionLink = "http://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=" + getResources().getString(R.string.amadeusAPI) + "&term=" + toCntry.getText().toString();
-
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line);
-        VolleyAirportRequest request = new VolleyAirportRequest(this, jsonConnectionLink, snackbarPosition2, toCntry, arrayAdapter);
+        VolleyRequest<Airport> request = new VolleyRequest<>(this, jsonConnectionLink, snackbarPosition2, v, arrayAdapter, Airport.class);
         PackalistApplication_.getInstance().addToRequestQueue(request);
     }
 
@@ -112,34 +156,86 @@ public class SearchActivity extends AppCompatActivity {
         String destination = toCntry.getText().toString();
         String departureDate = fromDate.getText().toString();
         String returnDate = toDate.getText().toString();
-        // Search the DB for packlists that have similar profile
-        searchDBPackList();
+        boolean isMale = male.isChecked();
+        boolean isFemale = female.isChecked();
+        boolean isParty = party.isChecked();
+        boolean isBackpacking = backpacking.isChecked();
+        boolean isBeach = beach.isChecked();
+        boolean isBusiness = business.isChecked();
+        if (checkValid(origin, destination, departureDate, returnDate, isMale, isFemale, isParty, isBackpacking, isBeach, isBusiness)) {
+            // Search the DB for packlists that have similar profile
+            // If nothing in the DB, we ask user to create one
+            searchDBPackList(origin, destination, departureDate, returnDate, isMale, isFemale, isParty, isBackpacking, isBeach, isBusiness);
+            startPackListActivity();
+        }
     }
 
-    private void searchDBPackList() {
+    private void startPackListActivity() {
+        Intent packListIntent = new Intent(SearchActivity.this, PackListActivity_.class);
+        startActivity(packListIntent);
+        this.finish();
     }
 
-    private void setDateTimeField() {
+    private boolean searchDBPackList(String origin, String destination, String departureDate, String returnDate, boolean isMale, boolean isFemale, boolean isParty, boolean isBackpacking, boolean isBeach, boolean isBusiness) {
+        EventBus.getDefault().postSticky(producePackItems());
+        if (producePackItems().getPItems().isEmpty())
+            return false;
+        return true;
+    }
 
-        Calendar newCalendar = Calendar.getInstance();
-        fromDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+    private List<PackItem> parseJSON(String jsonArray) {
 
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                fromDate.setText(dateFormatter.format(newDate.getTime()));
+        AmadeusJSONParser<PackItem> parser = new AmadeusJSONParser(PackItem.class);
+        List<PackItem> list = parser.unmarshalList(jsonArray);
+        return list;
+    }
+
+    public PackItemsAvailableEvent producePackItems() {
+        String jsonArray = "[{\"name\": \"shoes\",\"quantity\": 1,\"uom\": \"pairs\"},{\"name\": \"t-shirts\",\"quantity\": 7,\"uom\": \"pieces\"}]";
+        List<PackItem> items = parseJSON(jsonArray);
+        return new PackItemsAvailableEvent(items);
+    }
+
+    private boolean checkValid(String origin, String destination, String departureDate, String returnDate, boolean isMale, boolean isFemale, boolean isParty, boolean isBackpacking, boolean isBeach, boolean isBusiness) {
+        return !origin.isEmpty() && !destination.isEmpty() && isDateValid(departureDate, returnDate) && (isMale || isFemale) && (isParty || isBackpacking || isBeach || isBusiness);
+    }
+
+    private boolean isDateValid(String departureDate, String returnDate) {
+        if (!departureDate.equals("Departure Date") && !returnDate.equals("Return Date")) {
+            try {
+                Date date1 = dateFormatter.parse(departureDate);
+                Date date2 = dateFormatter.parse(returnDate);
+                return date2.compareTo(date1) > 0;
+
+            } catch (ParseException e) {
+                // execution will come here if the String that is given
+                // does not match the expected format.
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private void showDatePicker(final Button v) {
+
+        Dialog.Builder builder;
+        builder = new DatePickerDialog.Builder() {
+            @Override
+            public void onPositiveActionClicked(DialogFragment fragment) {
+                DatePickerDialog dialog = (DatePickerDialog) fragment.getDialog();
+                String date = dialog.getFormattedDate(dateFormatter);
+                super.onPositiveActionClicked(fragment);
+                v.setText(date);
             }
 
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
-        toDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                toDate.setText(dateFormatter.format(newDate.getTime()));
+            @Override
+            public void onNegativeActionClicked(DialogFragment fragment) {
+                super.onNegativeActionClicked(fragment);
             }
+        };
 
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+        builder.positiveAction("OK").negativeAction("CANCEL");
+        DialogFragment fragment = DialogFragment.newInstance(builder);
+        fragment.show(getSupportFragmentManager(), null);
     }
 }

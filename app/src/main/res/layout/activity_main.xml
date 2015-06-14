@@ -1,11 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="packalist.MainActivity">
 
-    <EditText
+    <com.rey.material.widget.EditText
         android:id="@+id/userEmail"
+        style="@style/Material.Widget.EditText.Light"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -23,8 +25,9 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/ic_logo" />
 
-    <EditText
+    <com.rey.material.widget.EditText
         android:id="@+id/userPassword"
+        style="@style/Material.Widget.EditText.Light"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userEmail"
@@ -34,8 +37,9 @@
         android:password="true"
         android:singleLine="true" />
 
-    <Button
+    <com.rey.material.widget.Button
         android:id="@+id/create_login"
+        style="@style/RaiseColorButtonRippleStyle"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userPassword"

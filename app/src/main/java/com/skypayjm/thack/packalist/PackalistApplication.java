@@ -7,12 +7,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
+import com.skypayjm.thack.packalist.Events.BusProvider;
 
 import org.androidannotations.annotations.EApplication;
 
 @EApplication
 public class PackalistApplication extends Application {
     private static PackalistApplication sInstance;
+    public static BusProvider busProvider;
 
     private RequestQueue mRequestQueue;
     /**
@@ -24,6 +26,7 @@ public class PackalistApplication extends Application {
         super.onCreate();
 
         sInstance = this;
+        busProvider = new BusProvider();
     }
 
     public synchronized static PackalistApplication getInstance() {

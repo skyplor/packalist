@@ -27,4 +27,8 @@ public class Airport {
     public String toString() {
         return label;
     }
+
+    public Airport() {
+
+    }
 }

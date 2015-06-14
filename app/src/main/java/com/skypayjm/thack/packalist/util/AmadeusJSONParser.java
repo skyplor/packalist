@@ -1,10 +1,11 @@
 package com.skypayjm.thack.packalist.util;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.skypayjm.thack.packalist.model.Airport;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,21 +13,27 @@ import java.util.ArrayList;
 /**
  * Created by user on 6/13/2015.
  */
-public class AmadeusJSONParser {
-    //T stands for"Type"
-//    private Class<T> targetClass;
+public class AmadeusJSONParser<T> {
+    //T stands for "Type"
+    private Class<T> targetClass;
 
-    private ArrayList<Airport> airports;
+    private ArrayList<T> list;
+    private T object;
 
-    public AmadeusJSONParser() {
+    public AmadeusJSONParser(Class<T> clazz) {
+        this.targetClass = clazz;
     }
 
-    public ArrayList<Airport> unmarshal(String json) {
+    public ArrayList<T> unmarshalList(String json) {
         ObjectMapper mapper = new ObjectMapper();
+        AnnotationIntrospector introspector = new JacksonAnnotationIntrospector();
 
+        mapper.getDeserializationConfig().with(introspector);
+
+        mapper.getSerializationConfig().with(introspector);
+        JavaType type = mapper.getTypeFactory().constructCollectionType(ArrayList.class, targetClass);
         try {
-            airports = mapper.readValue(json, new TypeReference<ArrayList<Airport>>() {
-            });
+            list = (ArrayList<T>) mapper.readValue(json, type);
 
         } catch (JsonParseException e) {
             e.printStackTrace();
@@ -36,6 +43,23 @@ public class AmadeusJSONParser {
             e.printStackTrace();
         }
 
-        return airports;
+        return list;
+    }
+
+    public T unmarshal(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            object = mapper.readValue(json, targetClass);
+
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return object;
     }
 }
